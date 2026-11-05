@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Management System</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header>
+    <div class="header-inner">
+      <h1>🛒 Order Management System</h1>
+      <p class="subtitle">Microservices Dashboard</p>
+    </div>
+  </header>
+
+  <!-- ===== SERVICE STATUS BAR ===== -->
+  <div class="status-bar">
+    <div class="status-item" id="status-user">
+      <span class="dot"></span> User Service (8081)
+    </div>
+    <div class="status-item" id="status-product">
+      <span class="dot"></span> Product Service (8082)
+    </div>
+    <div class="status-item" id="status-order">
+      <span class="dot"></span> Order Service (8083)
+    </div>
+    <button class="btn-check" onclick="checkAllServices()">🔄 Check Status</button>
+  </div>
+
+  <!-- ===== TABS ===== -->
+  <nav class="tabs">
+    <button class="tab active" onclick="switchTab('users', this)">👤 Users</button>
+    <button class="tab" onclick="switchTab('products', this)">📦 Products</button>
+    <button class="tab" onclick="switchTab('orders', this)">🧾 Orders</button>
+  </nav>
+
+  <main class="container">
+
+    <!-- ========== USERS TAB ========== -->
+    <section id="tab-users" class="tab-content active">
+      <div class="two-col">
+
+        <!-- Create User Form -->
+        <div class="card">
+          <h2>➕ Create User</h2>
+          <form id="form-create-user">
+            <label>Name</label>
+            <input type="text" id="user-name" placeholder="e.g. Alice" required />
+            <label>Email</label>
+            <input type="email" id="user-email" placeholder="e.g. alice@example.com" required />
+            <label>Phone</label>
+            <input type="text" id="user-phone" placeholder="e.g. 9876543210" required />
+            <button type="submit" class="btn-primary">Create User</button>
+          </form>
+          <div id="user-create-msg" class="msg"></div>
+        </div>
+
+        <!-- Get User by ID -->
+        <div class="card">
+          <h2>🔍 Get User by ID</h2>
+          <div class="inline-form">
+            <input type="number" id="get-user-id" placeholder="Enter User ID" min="1"/>
+            <button class="btn-secondary" onclick="getUserById()">Fetch</button>
+          </div>
+          <div id="single-user-result" class="result-box"></div>
+
+          <hr/>
+          <h2>🗑️ Delete User</h2>
+          <div class="inline-form">
+            <input type="number" id="delete-user-id" placeholder="Enter User ID" min="1"/>
+            <button class="btn-danger" onclick="deleteUser()">Delete</button>
+          </div>
+          <div id="delete-user-msg" class="msg"></div>
+        </div>
+      </div>
+
+      <!-- All Users Table -->
+      <div class="card full-width">
+        <div class="card-header">
+          <h2>📋 All Users</h2>
+          <button class="btn-secondary" onclick="loadUsers()">🔄 Refresh</button>
+        </div>
+        <div id="users-table-container">
+          <p class="hint">Click Refresh to load users.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== PRODUCTS TAB ========== -->
+    <section id="tab-products" class="tab-content">
+      <div class="two-col">
+
+        <!-- Create Product Form -->
+        <div class="card">
+          <h2>➕ Create Product</h2>
+          <form id="form-create-product">
+            <label>Name</label>
+            <input type="text" id="product-name" placeholder="e.g. Laptop" required />
+            <label>Description</label>
+            <input type="text" id="product-description" placeholder="e.g. Gaming Laptop" required />
+            <label>Price (₹)</label>
+            <input type="number" id="product-price" placeholder="e.g. 75000" step="0.01" required />
+            <label>Stock</label>
+            <input type="number" id="product-stock" placeholder="e.g. 10" required />
+            <button type="submit" class="btn-primary">Create Product</button>
+          </form>
+          <div id="product-create-msg" class="msg"></div>
+        </div>
+
+        <!-- Get Product by ID -->
+        <div class="card">
+          <h2>🔍 Get Product by ID</h2>
+          <div class="inline-form">
+            <input type="number" id="get-product-id" placeholder="Enter Product ID" min="1"/>
+            <button class="btn-secondary" onclick="getProductById()">Fetch</button>
+          </div>
+          <div id="single-product-result" class="result-box"></div>
+
+          <hr/>
+          <h2>🗑️ Delete Product</h2>
+          <div class="inline-form">
+            <input type="number" id="delete-product-id" placeholder="Enter Product ID" min="1"/>
+            <button class="btn-danger" onclick="deleteProduct()">Delete</button>
+          </div>
+          <div id="delete-product-msg" class="msg"></div>
+        </div>
+      </div>
+
+      <!-- All Products Table -->
+      <div class="card full-width">
+        <div class="card-header">
+          <h2>📋 All Products</h2>
+          <button class="btn-secondary" onclick="loadProducts()">🔄 Refresh</button>
+        </div>
+        <div id="products-table-container">
+          <p class="hint">Click Refresh to load products.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== ORDERS TAB ========== -->
+    <section id="tab-orders" class="tab-content">
+      <div class="two-col">
+
+        <!-- Place Order Form -->
+        <div class="card">
+          <h2>🛍️ Place New Order</h2>
+          <form id="form-place-order">
+            <label>User ID</label>
+            <input type="number" id="order-user-id" placeholder="e.g. 1" min="1" required />
+            <label>Product ID</label>
+            <input type="number" id="order-product-id" placeholder="e.g. 1" min="1" required />
+            <label>Quantity</label>
+            <input type="number" id="order-quantity" placeholder="e.g. 2" min="1" required />
+            <button type="submit" class="btn-primary">Place Order</button>
+          </form>
+          <div id="order-place-msg" class="msg"></div>
+          <!-- Order Response Card -->
+          <div id="order-response-card" class="order-response-card" style="display:none;"></div>
+        </div>
+
+        <!-- Order Actions -->
+        <div class="card">
+          <h2>🔍 Get Order by ID</h2>
+          <div class="inline-form">
+            <input type="number" id="get-order-id" placeholder="Enter Order ID" min="1"/>
+            <button class="btn-secondary" onclick="getOrderById()">Fetch</button>
+          </div>
+          <div id="single-order-result" class="result-box"></div>
+
+          <hr/>
+          <h2>👤 Orders by User ID</h2>
+          <div class="inline-form">
+            <input type="number" id="orders-by-user-id" placeholder="Enter User ID" min="1"/>
+            <button class="btn-secondary" onclick="getOrdersByUser()">Fetch</button>
+          </div>
+          <div id="orders-by-user-result" class="result-box"></div>
+
+          <hr/>
+          <h2>✏️ Update Order Status</h2>
+          <div class="inline-form">
+            <input type="number" id="update-order-id" placeholder="Order ID" min="1"/>
+            <select id="update-order-status">
+              <option value="PLACED">PLACED</option>
+              <option value="CONFIRMED">CONFIRMED</option>
+              <option value="SHIPPED">SHIPPED</option>
+              <option value="DELIVERED">DELIVERED</option>
+              <option value="CANCELLED">CANCELLED</option>
+            </select>
+            <button class="btn-warning" onclick="updateOrderStatus()">Update</button>
+          </div>
+          <div id="update-order-msg" class="msg"></div>
+        </div>
+      </div>
+
+      <!-- All Orders Table -->
+      <div class="card full-width">
+        <div class="card-header">
+          <h2>📋 All Orders</h2>
+          <button class="btn-secondary" onclick="loadOrders()">🔄 Refresh</button>
+        </div>
+        <div id="orders-table-container">
+          <p class="hint">Click Refresh to load orders.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== TOAST NOTIFICATION ===== -->
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
